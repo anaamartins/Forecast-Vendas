@@ -1,2 +1,2 @@
 # Forecast-Vendas
-Projeto para Forecast de Vendas, abrangendo processos de ETL, Data Warehouse, modelo tabular em SSAS e report e criação de report em Power BI.
+Projeto de Forecast de Vendas, integrando processos ETL, Data Warehouse, modelo tabular em SSAS, Power BI e modelos preditivos de Machine Learning
