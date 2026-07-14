@@ -13,10 +13,82 @@ Os dados encontravam-se dispersos por diferentes fontes, exigindo um elevado esf
 
 Este projeto pretende automatizar todo esse processo, disponibilizando informação consistente e atualizada para apoio à tomada de decisão.
 
-### Objetivos
+## Objetivos
 
-  .  Automatizar os processos de ETL
-  .  Centralizar a informação num Data Warehouse
-  .  Desenvolver um modelo tabular
-  .  Disponibilizar report/dashboard interativo para análise dos resultados
-  .  Criar modelos preditivos para Forecast de Vendas
+- Automatizar os processos de exportação, transformação e carregamento de dados.
+- Centralizar a informação num Data Warehouse.
+- Criar um modelo dimensional adequado à análise de vendas.
+- Desenvolver um modelo tabular em SQL Server Analysis Services.
+- Criar modelos preditivos para previsão de vendas.
+- Avaliar a qualidade das previsões através de métricas apropriadas.
+- Disponibilizar os resultados num report, dashboard e aplicação em Power BI.
+- Reduzir o esforço manual necessário para preparar e analisar a informação.
+
+
+
+## Arquitetura da Solução
+
+```mermaid
+flowchart LR
+    A[Fontes de Dados] --> B[Extração]
+    B --> C[Staging Area]
+    C --> D[Transformação e Validação]
+    D --> E[Data Warehouse]
+    E --> F[Modelo Tabular SSAS]
+    E --> G[Modelo de Machine Learning]
+    G -->|Previsões| E
+    F --> H[Power BI]
+    G --> H
+```
+
+
+## Ferramentas
+
+| Área | Tecnologia |
+|---|---|
+| Tratamento e análise de dados | Azure Data Factory, Python |
+| Machine Learning | Azure Machine Learning, Python|
+| Base de dados | Azure Data Studio |
+| ETL | Azure Data Factory |
+| Data Warehouse | Azure Data Studio |
+| Modelo semântico | SQL Server Analysis Services |
+| Visualização | Power BI |
+
+
+## Estrutura do Repositório
+
+```text
+forecast-vendas/
+├── data/
+│   ├── raw/                 # Dados originais
+│   ├── processed/           # Dados tratados
+│   └── sample/              # Amostra de dados
+├── notebooks/
+│   ├── 01_exploracao.ipynb
+│   ├── 02_preparacao.ipynb
+│   └── 03_modelacao.ipynb
+├── src/
+│   ├── data/
+│   │   ├── extract.py
+│   │   └── transform.py
+│   ├── features/
+│   │   └── build_features.py
+│   ├── models/
+│   │   ├── train.py
+│   │   └── predict.py
+│   └── evaluation/
+│       └── metrics.py
+├── sql/
+│   ├── staging/
+│   ├── data_warehouse/
+│   └── queries/
+├── powerbi/
+│   └── forecast-vendas.pbix
+├── docs/
+│   ├── data_dictionary.md
+│   └── images/
+├── tests/
+├── requirements.txt
+├── .gitignore
+├── LICENSE
+└── README.md
