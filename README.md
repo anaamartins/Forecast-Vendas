@@ -1,134 +1,251 @@
 # Forecast-Vendas
-Projeto de Forecast de Vendas, integrando processos ETL, Data Warehouse, modelo tabular em SSAS, Power BI e modelos preditivos de Machine Learning.
+Projeto de Forecast de Vendas, integrando processos ETL, Data Warehouse, modelo tabular em SSAS, Power BI e modelos preditivos de Machine Learning. A análise exploratória dos dados foi realizada em Python.
 
 ### Visão Geral
 Este projeto foi desenvolvido com o objetivo de apoiar o processo de Forecast de Vendas.
 
 O projeto contempla a exportação, transformação e carregamento dos dados (ETL), a construção de um Data Warehouse, o desenvolvimento de um modelo tabular em SSAS, a criação de modelos preditivos de Machine Learning e a disponibilização da informação através de report, dashboard e aplicação em Power BI.
 
-### Problema de Negócio
-A empresa necessitava de melhorar o processo de previsão de vendas, reduzindo o tempo gasto na preparação da informação e aumentando a fiabilidade das previsões.
+<p align="center">
+  <img src="docs/images/powerbi-executive-summary.png" alt="Power BI — Sumário Executivo" width="95%">
+</p>
 
-Os dados encontravam-se dispersos por diferentes fontes, exigindo esforço manual para a sua integração e análise.
 
-Este projeto pretende automatizar todo esse processo, disponibilizando informação consistente e atualizada para apoio à tomada de decisão.
+## Problema de negócio
 
-## Objetivos
+O processo de análise e previsão de vendas dependia da consolidação manual de dados provenientes de diferentes fontes.
 
-- Automatizar os processos de exportação, transformação e carregamento de dados.
-- Centralizar a informação num Data Warehouse.
-- Criar um modelo dimensional adequado à análise de vendas.
-- Desenvolver um modelo tabular em SQL Server Analysis Services.
-- Criar modelos preditivos para previsão de vendas.
-- Avaliar a qualidade das previsões através de métricas apropriadas.
-- Disponibilizar os resultados num report, dashboard e aplicação em Power BI.
-- Reduzir o esforço manual necessário para preparar e analisar a informação.
+Esta abordagem aumentava:
 
-## Arquitetura do Projeto
+- o tempo necessário para preparar a informação;
+- o risco de erros e inconsistências;
+- a dificuldade em atualizar as análises regularmente;
+- a dependência de tarefas manuais;
+- a dificuldade em incorporar indicadores externos no processo de forecast.
 
-```mermaid
-flowchart LR
-    A[Fontes de Dados]
+O projeto foi desenvolvido para automatizar este processo, criar uma fonte única de informação e apoiar o planeamento comercial e a tomada de decisão.
 
-    subgraph ADLS[Azure Data Lake Storage Gen2]
-        B[Source<br/>Ficheiros originais]
-        C[RAW<br/>Parquet]
-        D[Processed<br/>Dados tratados]
-    end
 
-    E[Azure Data Studio<br/>Tabelas Dimensão e Facto]
-    F[SSAS<br/>Modelo Tabular]
-    G[Power BI]
-    H[CSV]
-    I[Azure Machine Learning<br/>Python]
 
-    A --> B
-    B -->|Azure Data Factory<br/>Cópia e conversão| C
-    C -->|Azure Data Factory<br/>Transformação| D
-    C -->|Azure Data Factory<br/>Transformação e carga| E
+## Projeto
 
-    E --> F
-    F --> G
+O projeto integra diferentes componentes numa única plataforma analítica:
 
-    E -->|Exportação através do<br/>Azure Data Studio| H
-    H --> I
+- pipelines ETL desenvolvidos no Azure Data Factory;
+- Data Lake organizado nas camadas `Source`, `RAW` e `Processed`;
+- Data Warehouse com modelo dimensional;
+- modelo semântico tabular em SQL Server Analysis Services;
+- report, dashboard, aplicação e versão mobile em Power BI;
+- análise exploratória dos dados em Python;
+- desenvolvimento, treino, otimização e avaliação dos modelos no Azure Machine Learning;
+
+
+
+## Principais resultados
+
+A análise dos dados entre 2022 e 2024 permitiu identificar:
+
+- vendas anuais entre aproximadamente **40 M€ e 42,6 M€**;
+- crescimento das vendas de aproximadamente **6,6% em 2024**;
+- margens brutas estáveis entre **66% e 68%**;
+- elevada concentração das vendas no mercado angolano;
+- dependência de um número reduzido de clientes e mercados;
+- maior volume de vendas no mês de abril, associado à renovação de contratos de manutenção;
+- indícios de associação entre as vendas em Angola, o preço do petróleo e a taxa de câmbio.
+
+A componente preditiva obteve um coeficiente de determinação aproximado de **R² = 0,379**.
+
+Este resultado é apresentado como um **baseline inicial**, não como um modelo pronto para produção.
+
+
+
+## Arquitetura
+
+<p align="center">
+  <img src="docs/images/architecture.png" alt="Arquitetura da solução" width="100%">
+</p>
+
+O Pipeline Master do Azure Data Factory coordena a ingestão, transformação e carregamento dos dados.
+
+Os ficheiros são armazenados no Azure Data Lake Storage, processados por camadas e carregados no Data Warehouse SQL, criadas e geridas através do Azure Data Studio..
+
+O modelo tabular em SQL Server Analysis Services consome os dados do Data Warehouse e é utilizado pelo Power BI através de uma ligação live.
+
+A componente de Machine Learning utiliza um dataset preparado no Azure Data Factory e posteriormente processado em Python e Azure Machine Learning.
+
+### Fluxo simplificado
+
+```text
+ERP SAP + Base de Dados + Indicadores Macroeconómicos
+                         ↓
+                Azure Data Factory
+                         ↓
+              Azure Data Lake Storage
+              Source → RAW → Processed
+                         ↓
+              ┌──────────┴───────────┐
+              ↓                      ↓
+     SQL Data Warehouse       Dataset de Machine Learning
+              ↓               preparado no Azure Data Factory
+         SSAS Tabular                 ↓
+              ↓                Python — Análise Exploratória
+          Power BI                    ↓
+                              Azure Machine Learning
+                         Treino · Otimização · Avaliação
 ```
 
-O Pipeline Master, desenvolvido no Azure Data Factory, orquestra a conversão dos ficheiros para Parquet, o processamento das tabelas de dimensão e de factos e a atualização da `DimCalendario`.
 
-Os dados tratados são armazenados na camada `Processed` do Azure Data Lake Storage e carregados no Data Warehouse SQL. O modelo tabular desenvolvido em SQL Server Analysis Services consome os dados do Data Warehouse e é utilizado pelo Power BI através de uma ligação live.
 
-Para a componente preditiva, um Data Flow do Azure Data Factory prepara o dataset final e armazena-o em formato CSV num container. Este dataset é posteriormente analisado em Python e utilizado no Azure Machine Learning.
+## Power BI
+
+O report permite analisar o desempenho comercial e financeiro entre 2022 e 2024.
+
+As principais áreas de análise são:
+
+- sumário executivo;
+- clientes;
+- mercados e países;
+- empresas e linhas de negócio;
+- vendas, custos e margens;
+- concentração de receita;
+- contexto macroeconómico;
+- evolução mensal e anual;
+- forecast e avaliação das previsões.
+
+### Sumário executivo
+
+<p align="center">
+  <img src="docs/images/powerbi-executive-summary.png" alt="Power BI — Sumário Executivo" width="95%">
+</p>
+
+### Análise de vendas
+
+<p align="center">
+  <img src="docs/images/powerbi-sales-analysis.png" alt="Power BI — Análise de Vendas" width="95%">
+</p>
+
+### Contexto macroeconómico
+
+<p align="center">
+  <img src="docs/images/powerbi-macro-context.png" alt="Power BI — Contexto Macroeconómico" width="95%">
+</p>
+
+
+
+## Machine Learning
+
+A componente de Machine Learning foi desenvolvida para complementar a análise histórica com uma estimativa do valor das vendas.
+
+O processo incluiu:
+
+- análise exploratória dos dados;
+- tratamento de valores em falta;
+- análise de distribuições e correlações;
+- seleção e transformação das variáveis;
+- transformação logarítmica da variável-alvo;
+- divisão dos dados em treino e teste;
+- treino e otimização dos modelos;
+- validação cruzada;
+- avaliação das previsões.
+
+### Principais limitações do modelo
+
+- período histórico limitado a 2022–2024;
+- ausência de informação completa sobre contratos anteriores a 2022;
+- reduzida capacidade explicativa de algumas variáveis;
+- existência de fatores comerciais não representados nos dados;
+- comportamento distinto entre mercados e segmentos.
+
+
+
+## Recomendações para o negócio
+
+Com base nos resultados, foram identificadas as seguintes recomendações:
+
+- monitorizar a concentração de vendas por cliente e mercado;
+- simular o impacto de uma redução das vendas no mercado angolano;
+- incorporar informação contratual e dados do pipeline comercial;
+- desenvolver previsões separadas para mercados com comportamentos distintos;
+- acompanhar o efeito da taxa de câmbio e do preço do petróleo;
+- integrar as previsões e os respetivos erros no Power BI.
+
+
+
+## Próximos passos
+
+As prioridades para evolução do projeto são:
+
+- comparar o modelo com baselines temporais;
+- adicionar métricas como MAE, RMSE e WAPE;
+- incorporar dados contratuais e pipeline comercial;
+- criar previsões por mercado e linha de negócio;
+- integrar os resultados preditivos no modelo semântico.
+
+
 
 ## Ferramentas
 
 | Área | Tecnologia |
 |---|---|
 | Integração e orquestração | Azure Data Factory |
-| Armazenamento de ficheiros | Azure Data Lake Storage |
-| Transformação de dados | Azure Data Factory Data Flows |
-| Base de dados e Data Warehouse | Azure SQL Database ou SQL Server |
-| Gestão e consultas SQL | Azure Data Studio |
-| Machine Learning | Azure Machine Learning e Python |
+| Armazenamento | Azure Data Lake Storage |
+| Transformação | Azure Data Factory Data Flows |
+| Data Warehouse | SQL Server / Azure SQL Database |
+| Desenvolvimento e consultas SQL | Azure Data Studio |
 | Modelo semântico | SQL Server Analysis Services |
-| Visualização | Power BI |
+| Business Intelligence | Power BI |
+| Machine Learning | Python e Azure Machine Learning |
 
 
-forecast-vendas/
-├── adf/
-│   ├── datasets/
-│   ├── dataflows/
-│   └── pipelines/
-├── azureml/
-│   ├── notebooks/
-│   └── models/
-├── sql/
-│   ├── tables/
-│   ├── stored_procedures/
-│   └── queries/
-├── ssas/
-├── powerbi/
-├── data/
-│   └── sample/
-├── docs/
-│   ├── processo_etl.md
-│   ├── modelo_dimensional.md
-│   ├── machine_learning.md
-│   └── images/
-├── requirements.txt
-├── .gitignore
-├── LICENSE
-└── README.md
+
+## Contributo
+
+O projeto incluiu:
+
+- definição do problema de negócio e das necessidades de análise;
+- análise das fontes de dados disponíveis;
+- identificação dos processos de negócio abrangidos pelo projeto;
+- definição do granularidade das tabelas dimensão e facto;
+- desenho da arquitetura do projeto;
+- desenho do modelo dimensional, incluindo tabelas facto, dimensão, medidas e relações;
+- criação das tabelas de dimensões e factos no Data Warehouse SQL;
+- desenvolvimento dos pipelines e Data Flows no Azure Data Factory;
+- implementação dos processos de carregamento e atualização das tabelas;
+- desenvolvimento do modelo tabular em SQL Server Analysis Services;
+- criação de medidas, hierarquias, roles e partições;
+- desenvolvimento do report, dashboard, aplicação e versão mobile em Power BI;
+- análise exploratória dos dados em Python;
+- desenvolvimento, treino, otimização e avaliação dos modelos no Azure Machine Learning;
+- interpretação dos resultados e elaboração de recomendações.
 
 
-## Fontes de Dados
 
-O projeto integra dados relativos ao período de 2022 a 2024, provenientes de diferentes fontes:
+<details>
+<summary><strong>Detalhes do processo ETL</strong></summary>
 
-- **ERP SAP:** ficheiros exportados com informação empresarial e taxas de câmbio;
-- **Base de dados interna:** dados históricos de vendas;
-- **Fontes institucionais:** indicadores macroeconómicos dos países onde ocorreram vendas, incluindo desemprego, inflação, Produto Interno Bruto e preço do petróleo.
+<br>
 
-Os ficheiros originais são armazenados na camada `Source` do Azure Data Lake Storage.
+O processo ETL é coordenado por um Pipeline Master no Azure Data Factory.
 
-## Processo ETL
+As principais etapas são:
 
-O processo ETL foi desenvolvido no Azure Data Factory e é orquestrado por um Pipeline Master.
+1. carregamento dos ficheiros originais na camada `Source`;
+2. conversão dos ficheiros para Parquet;
+3. armazenamento dos dados na camada `RAW`;
+4. transformação das tabelas dimensão e facto;
+5. armazenamento dos dados tratados na camada `Processed`;
+6. carregamento no Data Warehouse SQL;
+7. atualização automática da `DimCalendario`;
+8. preparação do dataset utilizado em Machine Learning.
 
-O fluxo contempla:
+</details>
 
-1. Cópia dos ficheiros originais para a camada `Source`;
-2. Conversão dos dados para Parquet na camada `RAW`;
-3. Transformação das dimensões e factos através de Data Flows;
-4. Carregamento na camada `Processed` e no Data Warehouse SQL;
-5. Atualização automática da `DimCalendario`.
+<details>
+<summary><strong>Detalhes do modelo dimensional</strong></summary>
 
-Para mais detalhes, consultar a [documentação do processo ETL](docs/processo_etl.md).
+<br>
 
-
-## Modelo Dimensional
-
-O Data Warehouse segue um modelo dimensional composto pelas seguintes tabelas:
+O Data Warehouse utiliza um modelo dimensional composto pelas seguintes tabelas.
 
 ### Dimensões
 
@@ -140,72 +257,66 @@ O Data Warehouse segue um modelo dimensional composto pelas seguintes tabelas:
 - `DimTipoVenda`
 - `DimCalendario`
 
-### Factos
+### Tabelas de factos
 
 - `FactVendas`
 - `FactMacros`
 
-Foram utilizadas surrogate keys nas dimensões que não possuíam identificadores numéricos adequados. O carregamento das dimensões é realizado através de operações de upsert, garantindo a preservação das chaves e a integridade das relações com as tabelas facto.
+Foram utilizadas surrogate keys nas dimensões sem identificadores numéricos adequados.
 
-## Modelo Semântico
+O carregamento das dimensões utiliza operações de `upsert`, preservando as chaves e a integridade das relações com as tabelas de factos.
 
-O modelo semântico foi desenvolvido no Visual Studio através de SQL Server Analysis Services, mantendo a estrutura dimensional definida no Data Warehouse.
+<p align="center">
+  <img src="docs/images/dimensional-model.png" alt="Modelo dimensional" width="95%">
+</p>
 
-Durante a sua construção foram configurados:
+</details>
 
-- relações entre dimensões e factos;
-- medidas de vendas, custos, margens e indicadores macroeconómicos;
+<details>
+<summary><strong>Detalhes do modelo semântico</strong></summary>
+
+<br>
+
+O modelo tabular em SQL Server Analysis Services centraliza:
+
+- relações entre tabelas dimensão e facto;
+- medidas de vendas, custos e margens;
+- indicadores macroeconómicos;
 - hierarquias temporais e de produtos;
-- perspetivas de análise e vendas;
-- partições para os anos de 2022, 2023 e 2024;
+- perspetivas de análise;
+- partições anuais;
 - roles e regras de segurança;
 - traduções para inglês.
 
-O Power BI estabelece uma ligação live ao modelo tabular, garantindo que as alterações realizadas no modelo ou nos dados são refletidas nos relatórios.
+O Power BI utiliza uma ligação live ao modelo tabular.
 
-## Power BI
+</details>
 
-O relatório Power BI analisa o desempenho de vendas entre 2022 e 2024 e inclui uma componente dedicada ao contexto macroeconómico.
+<details>
+<summary><strong>Fontes de dados</strong></summary>
 
-As principais áreas de análise são:
+<br>
 
-- sumário executivo;
-- clientes;
-- mercados e países;
-- linhas de negócio;
-- decomposição das vendas;
-- contexto macroeconómico mensal;
-- contexto macroeconómico anual.
+O projeto integra dados relativos ao período de 2022 a 2024.
 
-Foram também desenvolvidos um dashboard, uma versão mobile e uma aplicação Power BI para centralizar o acesso aos conteúdos analíticos.
+As fontes utilizadas incluem:
 
-## Machine Learning
+- ERP SAP;
+- base de dados interna;
+- taxas de câmbio;
+- inflação;
+- desemprego;
+- Produto Interno Bruto;
+- preço do petróleo.
 
-A componente de Machine Learning foi desenvolvida para complementar a análise histórica realizada no Power BI com uma estimativa do valor das vendas.
+</details>
 
-O Azure Data Factory prepara e exporta o dataset final em formato CSV. Antes da modelação, foi realizada uma análise exploratória em Python para avaliar a distribuição dos dados, valores em falta, correlações e comportamento das vendas por país, empresa, centro de lucro e tipo de projeto.
 
-O modelo foi desenvolvido no Azure Machine Learning, incluindo:
 
-- seleção das variáveis;
-- transformação logarítmica da variável-alvo;
-- divisão dos dados em treino e teste;
-- treino e avaliação do modelo;
-- otimização de hiperparâmetros;
-- validação cruzada.
+## Documentação
 
-## Principais Resultados
-
-Entre 2022 e 2024, a análise permitiu identificar:
-
-- vendas anuais entre aproximadamente 40 M€ e 42,6 M€;
-- margens brutas estáveis entre 66% e 68%;
-- recuperação das vendas em 2024, com um crescimento de 6,6%;
-- forte concentração das vendas no mercado angolano;
-- destaque do mês de abril, associado à renovação de contratos de manutenção;
-- elevada dependência de um número reduzido de clientes e mercados;
-- influência do preço do petróleo e da taxa de câmbio no comportamento das vendas em Angola.
-
-O modelo de Machine Learning obteve um coeficiente de determinação de aproximadamente `R² = 0,379`, indicando que ainda existe margem significativa para melhoria. As principais limitações identificadas foram o reduzido período histórico, a baixa correlação entre algumas variáveis e a falta de informação sobre contratos iniciados antes de 2022.
+- [Processo ETL](docs/processo_etl.md)
+- [Modelo dimensional](docs/modelo_dimensional.md)
+- [Machine Learning](docs/machine_learning.md)
 
 
