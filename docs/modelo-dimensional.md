@@ -67,13 +67,13 @@ A `DimCliente` armazena os dados utilizados para analisar as vendas por cliente.
 
 | Atributo | Descrição |
 |---|---|
-| `IdCliente` | Identificador do cliente |
+| `IdCliente` | Id do cliente |
 | `NomeCliente` | Nome do cliente |
 | `Cidade` | Cidade do cliente |
 | `Pais` | País do cliente |
 | `Setor` | Setor de atividade |
 
-O identificador do cliente já existia na fonte e foi mantido por ser considerado numérico, único e válido.
+O id do cliente já existia na fonte e foi mantido por ser considerado numérico, único e válido.
 
 ### DimEmpresa
 
@@ -82,7 +82,7 @@ A `DimEmpresa` representa as empresas do grupo empresarial.
 | Atributo | Descrição |
 |---|---|
 | `SK_Empresa` | Surrogate key da empresa |
-| `IdEmpresa` | Identificador da empresa na fonte |
+| `IdEmpresa` | Id da empresa na fonte |
 | `NomeEmpresa` | Nome da empresa |
 | `Cidade` | Cidade da empresa |
 | `Pais` | País da empresa |
@@ -96,7 +96,7 @@ A `DimPais` contém a informação geográfica utilizada nas análises comerciai
 | Atributo | Descrição |
 |---|---|
 | `SK_Pais` | Surrogate key do país |
-| `IdPais` | Identificador do país na fonte |
+| `IdPais` | Id do país |
 | `Pais` | Nome do país |
 | `Continente` | Continente |
 | `Mercado` | Classificação como mercado nacional ou internacional |
@@ -109,7 +109,7 @@ A `DimCalendario` permite analisar os dados através de diferentes níveis tempo
 
 | Atributo | Descrição |
 |---|---|
-| `IdData` | Identificador da data |
+| `IdData` | Id da data |
 | `Data` | Data completa (dd/mm/aaaa) |
 | `Ano` | Ano |
 | `Semestre` | Semestre |
@@ -128,7 +128,7 @@ A `DimProduto` armazena os produtos comercializados pelas empresas do grupo.
 | Atributo | Descrição |
 |---|---|
 | `SK_Produto` | Surrogate key do produto |
-| `IdProduto` | Identificador do produto |
+| `IdProduto` | Id do produto |
 | `Produto` | Código ou referência do produto |
 | `NomeProduto` | Descrição do produto |
 | `CentroLucroProduto` | Centro de lucro associado |
@@ -146,7 +146,7 @@ A `DimProjeto` armazena a informação dos projetos associados às vendas.
 | Atributo | Descrição |
 |---|---|
 | `SK_Projeto` | Surrogate key do projeto |
-| `IdProjeto` | Identificador do projeto na fonte |
+| `IdProjeto` | Id do projeto na fonte |
 | `DescricaoProjeto` | Descrição do projeto |
 | `CentroLucro` | Centro de lucro |
 | `DescricaoCentroLucro` | Descrição do centro de lucro |
@@ -164,7 +164,7 @@ A `DimTipoVenda` permite classificar as vendas de acordo com a respetiva naturez
 | Atributo | Descrição |
 |---|---|
 | `SK_TipoVenda` | Surrogate key do tipo de venda |
-| `IdTipoVenda` | Identificador do tipo de venda na fonte |
+| `IdTipoVenda` | Id do tipo de venda na fonte |
 | `TipoVenda` | Descrição do tipo de venda |
 
 Esta dimensão permite distinguir, entre outros casos existentes nos dados, vendas associadas a nova venda, renovação de terceiros, manutenção própria e primeira manutenção.
@@ -287,8 +287,8 @@ As principais decisões tomadas durante o desenvolvimento foram:
 - utilização de uma tabela transacional para as vendas;
 - utilização de um snapshot periódico para os indicadores macroeconómicos;
 - partilha das dimensões `DimPais` e `DimCalendario`;
-- utilização de surrogate keys nas dimensões sem identificadores numéricos adequados;
-- manutenção do identificador original da `DimCliente`;
+- utilização de surrogate keys nas dimensões sem id numéricos adequados;
+- manutenção do id original da `DimCliente`;
 - criação de uma chave composta para os produtos;
 - criação da `DimCalendario` através de uma stored procedure.
 
