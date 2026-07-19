@@ -2,7 +2,7 @@
 
 ## Objetivo
 
-O modelo dimensional foi desenvolvido para organizar a informação comercial, financeira e macroeconómica, apoiando as análises realizadas no Power BI e a preparação dos dados utilizados em Machine Learning.
+O modelo dimensional foi desenvolvido para organizar a informação comercial e macroeconómica, apoiando as análises realizadas no Power BI e a preparação dos dados utilizados em Machine Learning.
 
 O modelo permite analisar:
 
@@ -23,18 +23,17 @@ Cada processo é representado por uma tabela de factos:
 
 | Processo de negócio | Tabela de factos | Tipo |
 |---|---|---|
-| Análise do desempenho comercial | `FactVendas` | Tabela de factos transacional |
-| Análise da influência de fatores macroeconómicos | `FactMacros` | Snapshot periódico |
+| Análise do desempenho comercial | `FactVendas` | transactional fact table |
+| Análise da influência de fatores macroeconómicos | `FactMacros` | periodic snapshot table |
 
 ## Estrutura do modelo
 
 O modelo é constituído por:
 
-- sete tabelas de dimensões;
-- duas tabelas de factos;
-- dimensões conformadas partilhadas pelas tabelas de factos.
+- 7 tabelas dimensão;
+- 2 tabelas facto;
 
-### Tabelas de dimensões
+### Tabelas de dimensão
 
 - `DimCliente`;
 - `DimEmpresa`;
@@ -44,7 +43,7 @@ O modelo é constituído por:
 - `DimProjeto`;
 - `DimTipoVenda`.
 
-### Tabelas de factos
+### Tabelas de facto
 
 - `FactVendas`;
 - `FactMacros`.
@@ -56,7 +55,7 @@ A granularidade define o nível de detalhe representado por cada linha de uma ta
 | Tabela | Granularidade |
 |---|---|
 | `FactVendas` | Uma linha por registo de venda adjudicada, contextualizado por data, cliente, empresa, país, produto, projeto e tipo de venda |
-| `FactMacros` | Uma linha por país e data de referência |
+| `FactMacros` | Uma linha por país e mês de referência |
 
 A definição da granularidade antes da construção das tabelas permitiu identificar corretamente as dimensões, métricas e relações necessárias para cada processo de negócio.
 
@@ -111,7 +110,7 @@ A `DimCalendario` permite analisar os dados através de diferentes níveis tempo
 | Atributo | Descrição |
 |---|---|
 | `IdData` | Identificador da data |
-| `Data` | Data completa |
+| `Data` | Data completa (dd/mm/aaaa) |
 | `Ano` | Ano |
 | `Semestre` | Semestre |
 | `Trimestre` | Trimestre |
@@ -138,7 +137,7 @@ A `DimProduto` armazena os produtos comercializados pelas empresas do grupo.
 | `Hierarquia3` | Terceiro nível da hierarquia |
 | `Hierarquia4` | Quarto nível da hierarquia |
 
-A chave de negócio do produto combina o código do produto com a empresa, uma vez que o mesmo produto pode estar associado a diferentes empresas ou hierarquias.
+A chave do produto combina o código do produto com a empresa, uma vez que o mesmo produto pode estar associado a diferentes empresas do grupo empresarial.
 
 ### DimProjeto
 
@@ -168,7 +167,7 @@ A `DimTipoVenda` permite classificar as vendas de acordo com a respetiva naturez
 | `IdTipoVenda` | Identificador do tipo de venda na fonte |
 | `TipoVenda` | Descrição do tipo de venda |
 
-Esta dimensão permite distinguir, entre outros casos existentes nos dados, vendas associadas a manutenção e primeira manutenção.
+Esta dimensão permite distinguir, entre outros casos existentes nos dados, vendas associadas a nova venda, renovação de terceiros, manutenção própria e primeira manutenção.
 
 ## Tabelas de factos
 
@@ -208,6 +207,8 @@ A tabela permite:
 
 A `FactMacros` é uma tabela de snapshot periódico. Cada linha representa o contexto macroeconómico de um país numa determinada data.
 
+Cada registo é associado ao último dia do respetivo mês através da `DimCalendario`.
+
 A tabela está relacionada com:
 
 - `DimPais`;
@@ -217,11 +218,12 @@ As principais métricas são:
 
 | Métrica | Descrição |
 |---|---|
-| `PIB` | Produto Interno Bruto |
-| `PrecoPetroleo` | Preço do petróleo associado ao período |
-| `TaxaCambio` | Taxa de câmbio |
-| `Desemprego` | Taxa de desemprego |
-| `Inflacao` | Taxa de inflação |
+| PIB | Produto Interno Bruto anual associado ao mês de referência |
+| PrecoPetroleo | Preço do petróleo associado ao final do mês |
+| TaxaCambio | Taxa de câmbio no último dia útil do mês |
+| Desemprego | Taxa anual de desemprego associada ao mês |
+| Inflacao | Taxa anual de inflação associada ao mês |
+
 
 A `FactMacros` permite:
 
@@ -311,14 +313,13 @@ A utilização de dimensões conformadas permite analisar os diferentes processo
 
 As principais decisões tomadas durante o desenvolvimento foram:
 
-- utilização de um modelo dimensional para simplificar a análise;
 - separação dos processos comercial e macroeconómico em duas tabelas de factos;
 - utilização de uma tabela transacional para as vendas;
 - utilização de um snapshot periódico para os indicadores macroeconómicos;
 - partilha das dimensões `DimPais` e `DimCalendario`;
 - utilização de surrogate keys nas dimensões sem identificadores numéricos adequados;
 - manutenção do identificador original da `DimCliente`;
-- criação de uma chave de negócio composta para os produtos;
+- criação de uma chave composta para os produtos;
 - criação da `DimCalendario` através de uma stored procedure.
 
 Estas decisões permitiram construir um modelo consistente, extensível e adequado ao consumo pelo modelo semântico e pelo Power BI.
