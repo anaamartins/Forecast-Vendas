@@ -239,7 +239,7 @@ As relações identificadas entre os indicadores macroeconómicos e as vendas t�
 
 ![Bus Matrix do modelo dimensional](../assets/dimensional-model/bus-matrix.png)
 
-*Figura 1 — Relação entre os processos de negócio e as dimensões utilizadas no modelo.*
+*Figura 1 - Relação entre os processos de negócio e as dimensões utilizadas no modelo.*
 
 ### Análise do desempenho comercial
 
@@ -278,7 +278,7 @@ O esquema de _constellation_ de fatos permite que múltiplas tabelas facto compa
 
 ![Esquema de constelação de factos](../assets/dimensional-model/fact-constellation.png)
 
-*Figura 2 — A FactVendas e a FactMacros partilham as dimensões conformadas DimPais e DimCalendario.*
+*Figura 2 - A FactVendas e a FactMacros partilham as dimensões conformadas DimPais e DimCalendario.*
 ## Decisões de modelação
 
 As principais decisões tomadas durante o desenvolvimento foram:
